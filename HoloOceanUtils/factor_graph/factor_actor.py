@@ -66,6 +66,17 @@ class FactorGraphCollector:
                 actor.prev_measured_linear_accel = state[actor.name]['IMUSensor'][0]
                 actor.prev_measured_angular_vel = state[actor.name]['IMUSensor'][1]
 
+
+        # try:
+        #     print(state['A']['AcousticBeaconSensor'])
+        #     print(state['A']['LocationSensor'])
+
+        # except:
+        #     # pass
+        #     print(state['A']['LocationSensor'])
+        #     print("Beacon doesn't exist")
+
+
         self.add_ground_truth_poses(state, now)
         self.add_landmark_ranges(state, now)
         self.add_actor_ranges(state, now)
@@ -97,6 +108,9 @@ class FactorGraphCollector:
     def add_actor_ranges(self, state, now):
         for actor1, actor2 in itertools.combinations(self.actors, 2):
             actor_range = float(np.linalg.norm(state[actor1.name]['LocationSensor'] - state[actor2.name]['LocationSensor']) + np.random.normal(0.0, self.parameters["auv_range_sigma"]))
+            # actor_range1 = float(np.linalg.norm(state[actor1.name]['LocationSensor'] - state[actor2.name]['LocationSensor']))
+            # r = state['A']['AcousticBeaconSensor'][5]
+            # print("r: ", r, " act_r: ", actor_range1, " diff: ", r - actor_range)
             actor_range_measurement = FGRangeMeasurement((actor1.name + str(self.counter), actor2.name + str(self.counter)), actor_range, self.parameters["auv_range_sigma"], now)
             self.pyfg.add_range_measurement(actor_range_measurement)
 

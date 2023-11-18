@@ -31,6 +31,9 @@ class TrialRunner:
         self.parameters = parameters
         self.index = index
 
+        # counter to update factor graph
+        self.counter = 0
+
         if parameters["diver_command_random_seed"] == None:
             self.diver_command_random_generator = np.random
         else:
@@ -39,12 +42,22 @@ class TrialRunner:
         self.diver_command = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
 
     def tick_trial(self, counter, start_time):
+        # sending message every time step causes a problem (constant depth)
+        if counter %50 ==0:
+            self.env.send_acoustic_message(1, 0, "MSG_RESPX", counter) # AUV receives divers bearing.
         state = self.env.tick()
+        
+
+        self.counter += 1
+        # # add to factor graph
+        # if counter % int(float(self.env._ticks_per_sec) * self.parameters["capture_length"]) == 0:
+        #     self.factor_graph_collector.update_graph(state, self.now)
 
         # add to factor graph
-        if counter % int(float(self.env._ticks_per_sec) * self.parameters["capture_length"]) == 0:
-            # self.env.send_acoustic_message(1, 0, "MSG_RESPX", 'howdy!')
+        if (self.counter >= int(float(self.env._ticks_per_sec) * self.parameters["capture_length"])) and \
+             "AcousticBeaconSensor" in state['A']:
             self.factor_graph_collector.update_graph(state, self.now)
+            self.counter = 0
 
         # update actors
         self.factor_graph_collector.update_actors(state, self.dt)

@@ -15,6 +15,7 @@
                         },
                         {
                             "sensor_type": "AcousticBeaconSensor",
+                            "location": [0,0,0],
                             "configuration": {
                                 "id": 0
                             }
@@ -44,6 +45,7 @@
                         },
                         {
                             "sensor_type": "AcousticBeaconSensor",
+                            "location": [0,0,0],
                             "configuration": {
                                 "id": 1
                             }
@@ -90,12 +92,6 @@
     "trials": [
         {
             "num_landmarks": 0
-        },
-        {
-            "num_landmarks": 1
-        },
-        {
-            "num_landmarks": 2
         }
     ]
 }
