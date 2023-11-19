@@ -7,6 +7,8 @@ default_parameters = {
     "num_captures": 10,
     "num_landmarks": 0,
     "auv_range_sigma": 0.1,
+    "auv_bearing_azimuth_sigma": 0.1,
+    "auv_bearing_elevation_sigma": 0.1,
     "landmark_range_sigma": 0.1,
     "landmark_bounds": [-100, 100, -100, 100, 0, 0],
     "should_render_viewport": True,

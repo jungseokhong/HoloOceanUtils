@@ -5,7 +5,7 @@ import itertools
 
 from py_factor_graph.variables import PoseVariable3D, LandmarkVariable3D
 from py_factor_graph.factor_graph import FactorGraphData
-from py_factor_graph.measurements import FGRangeMeasurement, PoseMeasurement3D
+from py_factor_graph.measurements import FGRangeMeasurement, PoseMeasurement3D, FGBearingMeasurement
 from py_factor_graph.io.pyfg_text import save_to_pyfg_text
 from py_factor_graph.utils.matrix_utils import get_measurement_precisions_from_covariances
 from py_factor_graph.utils.name_utils import get_robot_idx_from_char
@@ -67,19 +67,20 @@ class FactorGraphCollector:
                 actor.prev_measured_angular_vel = state[actor.name]['IMUSensor'][1]
 
 
-        # try:
-        #     print(state['A']['AcousticBeaconSensor'])
-        #     print(state['A']['LocationSensor'])
+        try:
+            print(state['A']['AcousticBeaconSensor'])
+            print(state['A']['LocationSensor'])
 
-        # except:
-        #     # pass
-        #     print(state['A']['LocationSensor'])
-        #     print("Beacon doesn't exist")
+        except:
+            # pass
+            print(state['A']['LocationSensor'])
+            print("Beacon doesn't exist")
 
 
         self.add_ground_truth_poses(state, now)
         self.add_landmark_ranges(state, now)
         self.add_actor_ranges(state, now)
+        self.add_actor_bearings(state, now)
         if self.counter != 0:
             self.add_odometry_pre_integrate(now)
         self.counter += 1
@@ -113,6 +114,15 @@ class FactorGraphCollector:
             # print("r: ", r, " act_r: ", actor_range1, " diff: ", r - actor_range)
             actor_range_measurement = FGRangeMeasurement((actor1.name + str(self.counter), actor2.name + str(self.counter)), actor_range, self.parameters["auv_range_sigma"], now)
             self.pyfg.add_range_measurement(actor_range_measurement)
+
+
+    def add_actor_bearings(self, state, now):
+        for actor1, actor2 in itertools.combinations(self.actors, 2):
+            actor_bearing_azimuth = state['A']['AcousticBeaconSensor'][3] + np.random.normal(0.0, self.parameters["auv_bearing_azimuth_sigma"])
+            actor_bearing_elevation = state['A']['AcousticBeaconSensor'][4] + np.random.normal(0.0, self.parameters["auv_bearing_elevation_sigma"])
+            actor_bearing_measurement = FGBearingMeasurement((actor1.name + str(self.counter), actor2.name + str(self.counter)), actor_bearing_azimuth, actor_bearing_elevation, self.parameters["auv_bearing_azimuth_sigma"], self.parameters["auv_bearing_elevation_sigma"], now)
+            self.pyfg.add_bearing_measurement(actor_bearing_measurement)
+
 
     def add_odometry_pre_integrate(self, now):
         for actor in self.actors:

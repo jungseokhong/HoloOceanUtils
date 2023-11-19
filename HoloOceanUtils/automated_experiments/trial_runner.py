@@ -47,7 +47,6 @@ class TrialRunner:
             self.env.send_acoustic_message(1, 0, "MSG_RESPX", counter) # AUV receives divers bearing.
         state = self.env.tick()
         
-
         self.counter += 1
         # # add to factor graph
         # if counter % int(float(self.env._ticks_per_sec) * self.parameters["capture_length"]) == 0:
