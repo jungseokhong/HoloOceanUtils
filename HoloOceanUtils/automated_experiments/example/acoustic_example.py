@@ -35,7 +35,7 @@ cfg = {
                 },
             ],
             "control_scheme": 0,
-            "location": [3, 3, -7]
+            "location": [1, 0, -7]
         }
     ]
 }
@@ -53,7 +53,7 @@ env.reset()
 env.send_acoustic_message(0, 1, "MSG_RESPX", "my_data_payload1")
 
 
-for i in range(300):
+for i in range(10000):
     states = env.tick()
 
     if "AcousticBeaconSensor" in states['auv1']:
