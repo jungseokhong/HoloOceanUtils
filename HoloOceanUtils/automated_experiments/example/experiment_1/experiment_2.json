@@ -86,6 +86,8 @@
         "pyfg_save_name": "test",
         "should_render_viewport": false,
         "auv_range_sigma": 0.1,
+        "auv_bearing_azimuth_sigma": 0.1,
+        "auv_bearing_elevation_sigma": 0.1,        
         "landmark_range_sigma": 0.1,
         "diver_command_random_seed": 195823904897
     },
