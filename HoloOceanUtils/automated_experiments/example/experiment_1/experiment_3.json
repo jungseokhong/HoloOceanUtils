@@ -83,7 +83,7 @@
         "circling_radius": 20.0,
         "circling_period": 50.0,
         "diver_depth_offset": -10,
-        "pyfg_save_location": "/home/morrisjp/Documents/Holoocean/HoloOceanUtils/automated_experiments/example/experiment_1/",
+        "pyfg_save_location": "/home/jungseok/git/HoloOceanUtils/HoloOceanUtils/automated_experiments/example/experiment_1/",
         "pyfg_save_name": "exp4",
         "should_render_viewport": false,
         "auv_range_sigma": 0.05,
