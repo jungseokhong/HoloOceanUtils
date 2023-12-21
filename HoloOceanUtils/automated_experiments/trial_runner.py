@@ -44,7 +44,9 @@ class TrialRunner:
     def tick_trial(self, counter, start_time):
         # sending message every time step causes a problem (constant depth)
         if counter %50 ==0:
-            self.env.send_acoustic_message(1, 0, "MSG_RESPX", counter) # AUV receives divers bearing.
+            # AUV (0) receives divers (1) bearing.
+            # AUV will have azimuth to diver, elevation to diver, range, its depth
+            self.env.send_acoustic_message(1, 0, "MSG_RESPX", counter) 
         state = self.env.tick()
         
         self.counter += 1
