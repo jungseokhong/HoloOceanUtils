@@ -2,6 +2,7 @@ import numpy as np
 from scipy.spatial.transform import Rotation
 from HoloOceanUtils.factor_graph.actor import Actor
 import itertools
+import math as math
 
 from py_factor_graph.variables import PoseVariable3D, LandmarkVariable3D
 from py_factor_graph.factor_graph import FactorGraphData
@@ -118,8 +119,15 @@ class FactorGraphCollector:
 
     def add_actor_bearings(self, state, now):
         for actor1, actor2 in itertools.combinations(self.actors, 2):
-            actor_bearing_azimuth = state['A']['AcousticBeaconSensor'][3] + np.random.normal(0.0, self.parameters["auv_bearing_azimuth_sigma"])
-            actor_bearing_elevation = state['A']['AcousticBeaconSensor'][4] + np.random.normal(0.0, self.parameters["auv_bearing_elevation_sigma"])
+            # actor_bearing_azimuth = state['A']['AcousticBeaconSensor'][3] + np.random.normal(0.0, self.parameters["auv_bearing_azimuth_sigma"])
+            # actor_bearing_elevation = state['A']['AcousticBeaconSensor'][4] + np.random.normal(0.0, self.parameters["auv_bearing_elevation_sigma"])
+            
+            # directly calculate sigma from elevation using the equations from Jakuba's paper (2019)
+            actor_bearing_gt_elevation = state['A']['AcousticBeaconSensor'][4]
+            actor_bearing_elevation_sigma = 0.35*math.exp(-2.5*actor_bearing_gt_elevation)
+            actor_bearing_azimuth_sigma = 0.00218*math.exp(2.2*actor_bearing_gt_elevation) + 0.00654
+            actor_bearing_elevation = state['A']['AcousticBeaconSensor'][4] + np.random.normal(0.0, actor_bearing_elevation_sigma)
+            actor_bearing_azimuth = state['A']['AcousticBeaconSensor'][3] + np.random.normal(0.0, actor_bearing_azimuth_sigma)
             actor_bearing_measurement = FGBearingMeasurement((actor1.name + str(self.counter), actor2.name + str(self.counter)), actor_bearing_azimuth, actor_bearing_elevation, self.parameters["auv_bearing_azimuth_sigma"], self.parameters["auv_bearing_elevation_sigma"], now)
             self.pyfg.add_bearing_measurement(actor_bearing_measurement)
 
